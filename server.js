@@ -1,27 +1,17 @@
-var express = require("express");
-var webpackDevMiddleware = require("webpack-dev-middleware");
-var webpack = require("webpack");
-var config = require("./webpack.config");
+var express = require('express');
 var path = require('path');
 
 var app = express();
-var compiler = webpack(config);
-console.log(compiler);
 
+var isProduction = process.env.NODE_ENV === 'production';
+var port = isProduction ? process.env.PORT : 8080;
+var publicPath = path.resolve(__dirname, 'public');
+var distPath = path.resolve(__dirname, 'dist');
 
-const middleware = webpackDevMiddleware(compiler,{
-  publicPath: path.resolve(__dirname, 'public'),
-  stats: {
-      colors: true,
-      hash: false,
-      timings: true,
-      chunks: false,
-      chunkModules: false,
-      modules: false
-  }
-});
+// We point to our static assets
+app.use(express.static(publicPath));
 
-app.use(middleware);
-app.listen(3000, function () {
-  console.log("Listening on port 3000!");
+// And run the server
+app.listen(port, function () {
+  console.log('Server running on port ' + port);
 });
